@@ -202,6 +202,16 @@
           <button class="ghost" type="button" id="clear">Borrar registros</button>
         </div>
         </form>
+        <div id="okmsg" class="panel" style="display:none;">
+        <div class="ok">✅ Ya has sido registrado en el sorteo.</div>
+        <div class="small">Te avisaremos por correo corporativo si resultas ganador.</div>
+        </div>
+
+        <div id="errmsg" class="panel" style="display:none;">
+        <div class="small" style="font-weight:900;">⚠️ No se ha podido completar el registro</div>
+        <div id="errmsgText" class="small">Ha ocurrido un error. Inténtalo de nuevo.</div>
+        </div>
+
         <div class="panel">
           <div class="small">Estado:</div>
           <div id="status" class="mono small">Sin envíos todavía.</div>
@@ -275,44 +285,73 @@
 
   render();
 
-  document.getElementById("f").addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.getElementById("f").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const form = e.target;
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
+  const form = e.target;
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const ok = document.getElementById("okmsg");
+  const err = document.getElementById("errmsg");
+  const errText = document.getElementById("errmsgText");
+  const btn = form.querySelector('button[type="submit"]');
+  if (btn) { btn.disabled = true; btn.textContent = "Enviando..."; }
 
-    // Guardado local (como ya hacías)
-    const entries = load();
-    entries.push({ name, email, submittedAt: new Date().toISOString() });
-    localStorage.setItem(KEY, JSON.stringify(entries));
-    render();
+  // Oculta mensajes anteriores
+  if (ok) ok.style.display = "none";
+  if (err) err.style.display = "none";
 
-    // Envío a Formspree (recomendado: NO mandar contraseña real)
-    const passInput = document.getElementById("password");
-    if (passInput) passInput.value = "";     // vacía antes de enviar
-    
-    const fd = new FormData(form);
-    fd.set("password_enviada", "true");
+  // 1) Evitar correos duplicados (localStorage)
+  const entries = load();
+  const exists = entries.some(x => (x.email || "").toLowerCase() === email);
+  if (exists) {
+    if (errText) errText.textContent = "Este correo ya está registrado en el sorteo. Si crees que es un error, contacta con RRHH.";
+    if (err) err.style.display = "block";
+    setStatus("⚠️ Este correo ya está registrado en el sorteo.");
+    if (btn) { btn.disabled = false; btn.textContent = "Enviar participación"; 
+    return;
+  }
 
-    try{
-      const res = await fetch(FORMSPREE, {
-        method: "POST",
-        body: fd,
-        headers: { "Accept": "application/json" }
-      });
+  // 2) NO enviar contraseña real
+  const passInput = document.getElementById("password");
+  if (passInput) passInput.value = ""; // vacía antes de crear FormData
 
-      if(res.ok){
-        setStatus(`✅ Enviado a Formspree y guardado local: ${email} · ${new Date().toLocaleString()}`);
-        form.reset();
-      } else {
-        setStatus(`⚠️ Guardado local OK, pero Formspree devolvió error (${res.status}).`);
-      }
-    } catch {
-      setStatus("⚠️ Guardado local OK, pero no se pudo conectar con Formspree.");
+  const fd = new FormData(form);
+  // Asegura que el email enviado va normalizado también
+  fd.set("email", email);
+  fd.set("password_enviada", "true");
+
+  try {
+    const res = await fetch(FORMSPREE, {
+      method: "POST",
+      body: fd,
+      headers: { "Accept": "application/json" }
+    });
+
+    if (res.ok) {
+      // 3) Guardar local SOLO si el envío fue OK
+      entries.push({ name, email, submittedAt: new Date().toISOString() });
+      localStorage.setItem(KEY, JSON.stringify(entries));
+      render();
+
+      setStatus(`✅ Ya has sido registrado en el sorteo. (${email})`);
+      if (ok) ok.style.display = "block";
+      setTimeout(() => { if (ok) ok.style.display = "none"; }, 8000);
+      form.reset();
+      
+    } else {
+      if (errText) errText.textContent = `Ha habido un error al registrarse (código ${res.status}). Inténtalo de nuevo.`;
+      if (err) err.style.display = "block";
+      setStatus(`⚠️ Ha habido un error al registrarse (código ${res.status}).`);
     }
-  });
-
+  } catch {
+    if (errText) errText.textContent = "Ha habido un error al registrarse. Revisa tu conexión e inténtalo de nuevo.";
+    if (err) err.style.display = "block";
+    setStatus("⚠️ Ha habido un error al registrarse.");
+  } finally {
+  if (btn) { btn.disabled = false; btn.textContent = "Enviar participación"; }
+  }
+});
   document.getElementById("clear").addEventListener("click", () => {
     localStorage.removeItem(KEY);
     render();
@@ -322,6 +361,7 @@
 
 </body>
 </html>
+
 
 
 
