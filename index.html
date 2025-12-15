@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sorteo | Osasuna vs Real Madrid</title>
+
+  <!-- Favicon (usa tu logo) -->
+  <link rel="icon" type="image/jpeg" href="img/logo.jpg" />
+
+  <style>
+    :root{
+      --stroke:#ffffff1a;
+      --txt:#eaf0ff; --muted:#c4cbee;
+      --red:#d61f2c; --gold:#ffcc66; --cyan:#5ff0ff;
+      --shadow: 0 20px 60px #0008;
+      --radius: 22px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:var(--font);
+      color:var(--txt);
+      overflow-x:hidden;
+
+      /* Fondo con imagen + tonos fríos (sin verdoso) */
+      background:
+        radial-gradient(1200px 700px at 15% 20%, #2a3cff2a, transparent 60%),
+        radial-gradient(900px 650px at 80% 30%, #5ff0ff1a, transparent 58%),
+        radial-gradient(900px 600px at 40% 85%, #ff2b2b18, transparent 62%),
+        url("img/fondo.avif");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      position:relative;
+    }
+
+    /* Overlay para dar contraste sin “matar” el fondo */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(180deg, #050815b3, #0508158f 35%, #050815bf),
+        radial-gradient(1200px 650px at 50% 15%, #0b2a7a35, transparent 60%);
+      z-index:-1;
+    }
+
+    .grid{
+      position:fixed; inset:-2px;
+      background:
+        linear-gradient(to right, #ffffff0d 1px, transparent 1px),
+        linear-gradient(to bottom, #ffffff0d 1px, transparent 1px);
+      background-size:64px 64px;
+      opacity:.20;
+      pointer-events:none;
+      animation: drift 18s linear infinite;
+    }
+    @keyframes drift{ to { transform: translate(32px,24px); } }
+
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(to bottom, #00000080, #00000025 60%, transparent);
+      border-bottom:1px solid #ffffff10;
+    }
+
+    .wrap{ width:min(1120px,92vw); margin:0 auto; }
+
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:14px;
+    }
+
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      font-weight:800;
+    }
+
+    .logo{
+      height:42px;
+      width:auto;
+      display:block;
+      border-radius:10px;
+      box-shadow: 0 10px 22px #0007;
+      background:#ffffff;
+      padding:4px;
+    }
+
+    .pill{
+      font-size:12px; color:#d6ddff;
+      border:1px solid #ffffff20;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#0b102070;
+      white-space:nowrap;
+    }
+
+    main{ padding:34px 0 80px; }
+
+    .hero{
+      display:grid; gap:22px;
+      grid-template-columns:1.15fr .85fr;
+      align-items:stretch;
+    }
+    @media(max-width:900px){
+      .hero{ grid-template-columns:1fr; }
+    }
+
+    .card{
+      /* Más opaco para que se lea mejor */
+      background: linear-gradient(180deg, #0e1638e6, #070b18d9);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .inner{ padding:26px; }
+
+    h1{
+      margin:0 0 10px;
+      font-size:clamp(28px,3vw,44px);
+      letter-spacing:-.4px;
+    }
+
+    .sub{
+      margin:0 0 18px;
+      color:var(--muted);
+      line-height:1.55;
+      font-size:15px;
+    }
+
+    .highlight{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .chip{
+      display:flex; gap:8px; align-items:center;
+      padding:10px 12px;
+      border-radius:14px;
+      background:#0b102080;
+      border:1px solid #ffffff18;
+      font-size:13px;
+      color:#eaf0ff;
+      box-shadow: 0 10px 20px #0004;
+    }
+
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background:var(--cyan);
+      box-shadow:0 0 0 4px #5ff0ff1a;
+    }
+
+    .ctaRow{
+      display:flex; gap:12px; flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .btn{
+      padding:12px 16px;
+      border-radius:16px;
+      font-weight:900;
+      text-decoration:none;
+      display:inline-flex; align-items:center; gap:10px;
+      transition:.15s;
+      letter-spacing:.2px;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+
+    .btnPrimary{
+      background:linear-gradient(135deg,var(--red),#ff5a6b);
+      color:white;
+      box-shadow:0 16px 30px #d61f2c33;
+    }
+
+    .side{ display:grid; grid-template-rows:auto 1fr; }
+
+    .ticket{
+      padding:18px;
+      border-bottom:1px dashed #ffffff22;
+      display:flex; justify-content:space-between;
+      gap:12px;
+      background: linear-gradient(180deg, #ffffff0a, transparent);
+    }
+
+    .poster{ padding:18px; }
+
+    .match{
+      border-radius:18px;
+      border:1px solid #ffffff1a;
+      background:
+        radial-gradient(280px 180px at 25% 35%, #5ff0ff1a, transparent 60%),
+        radial-gradient(280px 180px at 75% 70%, #ffcc6614, transparent 62%),
+        linear-gradient(160deg,#0c1433,#09101f);
+      padding:16px;
+    }
+
+    .row{ display:flex; justify-content:space-between; align-items:center; }
+    .team{ font-weight:900; }
+    .vs{ font-weight:900; opacity:.9; }
+
+    .meta{
+      display:flex; gap:10px; flex-wrap:wrap;
+      font-size:12px; color:var(--muted);
+      margin-top:10px;
+    }
+    .meta b{ color:#fff; }
+
+    .progress{
+      margin-top:10px;
+      height:10px;
+      border-radius:999px;
+      background:#ffffff12;
+      overflow:hidden;
+      border:1px solid #ffffff14;
+    }
+
+    .bar{
+      height:100%;
+      width:75%;
+      background:linear-gradient(90deg,var(--cyan),var(--gold),#ff4d5f);
+      animation:fill 5s infinite alternate;
+    }
+    @keyframes fill{ from{width:60%} to{width:90%} }
+
+    footer{
+      margin-top:30px;
+      font-size:12px;
+      color:#c7d0ff;
+      text-shadow: 0 2px 14px #000a;
+    }
+  </style>
+</head>
+
+<body>
+<div class="grid"></div>
+
+<header>
+  <div class="wrap topbar">
+    <div class="brand">
+      <img class="logo" src="img/logo.jpg" alt="EXKAL">
+      <div>
+        Sorteo EXKAL<br>
+        <span class="pill">Edición especial • 2 entradas</span>
+      </div>
+    </div>
+    <div class="pill">Cierre inscripciones: <b>16/02/2026</b></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+
+    <section class="card">
+      <div class="inner">
+        <h1>Sorteo de 2 entradas<br>Osasuna vs Real Madrid</h1>
+        <p class="sub">
+          Partido: <b>22 de febrero de 2026</b>. Pack doble para 2 personas.
+        </p>
+
+        <div class="highlight">
+          <div class="chip"><span class="dot"></span>2 asientos juntos</div>
+          <div class="chip"><span class="dot" style="background:var(--gold)"></span>Sorteo interno</div>
+          <div class="chip"><span class="dot" style="background:#ff5a6b"></span>Plazas limitadas</div>
+        </div>
+
+        <div class="ctaRow">
+          <a href="registro.html" class="btn btnPrimary">Continuar al registro →</a>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card side">
+      <div class="ticket">
+        <div>
+          <b>Osasuna vs Real Madrid</b><br>
+          <span class="pill">22/02/2026</span>
+        </div>
+        <span class="pill">Sorteo</span>
+      </div>
+
+      <div class="poster">
+        <div class="match">
+          <div class="row">
+            <div class="team">Osasuna</div>
+            <div class="vs">VS</div>
+            <div class="team">Real Madrid</div>
+          </div>
+          <div class="meta">
+            <span>Pack: <b>2 personas</b></span>
+            <span>Estado: <b>Abierto</b></span>
+          </div>
+          <div class="progress"><div class="bar"></div></div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer>© 2026 • Sorteo EXKAL</footer>
+</main>
+</body>
+</html>
