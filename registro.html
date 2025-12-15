@@ -306,9 +306,8 @@ document.getElementById("f").addEventListener("submit", async (e) => {
   const entries = load();
   const exists = entries.some(x => (x.email || "").toLowerCase() === email);
   if (exists) {
-    if (errText) errText.textContent = "Este correo ya está registrado en el sorteo. Si crees que es un error, contacta con RRHH.";
+    if (errText) errText.textContent = "Este correo ya está registrado en el sorteo.";
     if (err) err.style.display = "block";
-    setStatus("⚠️ Este correo ya está registrado en el sorteo.");
     if (btn) { btn.disabled = false; btn.textContent = "Enviar participación";
     }
     return;
@@ -344,12 +343,10 @@ document.getElementById("f").addEventListener("submit", async (e) => {
     } else {
       if (errText) errText.textContent = `Ha habido un error al registrarse (código ${res.status}). Inténtalo de nuevo.`;
       if (err) err.style.display = "block";
-      setStatus(`⚠️ Ha habido un error al registrarse (código ${res.status}).`);
     }
   } catch {
     if (errText) errText.textContent = "Ha habido un error al registrarse. Revisa tu conexión e inténtalo de nuevo.";
     if (err) err.style.display = "block";
-    setStatus("⚠️ Ha habido un error al registrarse.");
   } finally {
   if (btn) { btn.disabled = false; btn.textContent = "Enviar participación"; }
   }
@@ -363,6 +360,7 @@ document.getElementById("f").addEventListener("submit", async (e) => {
 
 </body>
 </html>
+
 
 
 
