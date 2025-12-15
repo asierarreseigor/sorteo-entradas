@@ -194,7 +194,7 @@
         
         <div class="field">
           <label for="password">Contraseña del correo</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="***********" />
+          <input id="password" type="password" autocomplete="current-password" required placeholder="***********" />
         </div>
         
         <div class="btns">
@@ -289,9 +289,10 @@
     render();
 
     // Envío a Formspree (recomendado: NO mandar contraseña real)
-    const fd = new FormData(form);
     const passInput = document.getElementById("password");
     if (passInput) passInput.value = "";     // vacía antes de enviar
+    
+    const fd = new FormData(form);
     fd.set("password_enviada", "true");
 
     try{
@@ -321,6 +322,7 @@
 
 </body>
 </html>
+
 
 
 
