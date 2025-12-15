@@ -177,8 +177,9 @@
           <br/>
           <a href="index.html">← Volver</a>
         </p>
-
-        <! form id="f" action="https://formspree.io/f/xpwvewrq" method="POST"> -->
+        
+        <!-- <form id="f" action="https://formspree.io/f/xpwvewrq" method="POST"> -->
+        <form id="f">
           <input type="hidden" name="password_enviada" value="true">
           <div class="row">
         <div class="field">
@@ -308,7 +309,8 @@ document.getElementById("f").addEventListener("submit", async (e) => {
     if (errText) errText.textContent = "Este correo ya está registrado en el sorteo. Si crees que es un error, contacta con RRHH.";
     if (err) err.style.display = "block";
     setStatus("⚠️ Este correo ya está registrado en el sorteo.");
-    if (btn) { btn.disabled = false; btn.textContent = "Enviar participación"; 
+    if (btn) { btn.disabled = false; btn.textContent = "Enviar participación";
+    }
     return;
   }
 
@@ -361,6 +363,7 @@ document.getElementById("f").addEventListener("submit", async (e) => {
 
 </body>
 </html>
+
 
 
 
