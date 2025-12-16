@@ -90,7 +90,7 @@
       box-shadow: 0 10px 20px #0004;
     }
 
-    input{
+    input, select{
       width:100%;
       padding:12px 12px;
       border-radius: 14px;
@@ -99,7 +99,7 @@
       color:var(--txt);
       outline:none;
     }
-    input:focus{
+    input:focus, select:focus{
       border-color:#5ff0ff66;
       box-shadow: 0 0 0 4px #5ff0ff1a;
     }
@@ -126,7 +126,6 @@
       border:1px solid #ffffff1f;
       color:#eaf0ff;
     }
-
     .panel{
       margin-top: 18px;
       padding: 16px;
@@ -180,28 +179,53 @@
         
         <!-- <form id="f" action="https://formspree.io/f/xpwvewrq" method="POST"> -->
         <form id="f">
-          <input type="hidden" name="password_enviada" value="true">
+          <input type="hidden" name="password_enviada" value="false">
+        
           <div class="row">
-        <div class="field">
-          <label for="name">Nombre y apellidos</label>
-          <input id="name" name="name" autocomplete="name" required placeholder="Ej. Nombre Apellidos" />
-        </div>
+            <div class="field">
+              <label for="name">Nombre y apellidos</label>
+              <input id="name" name="name" autocomplete="name" required placeholder="Ej. Nombre Apellidos" />
+            </div>
         
-        <div class="field">
-          <label for="email">Correo corporativo</label>
-          <input id="email" name="email" type="email" autocomplete="email" required placeholder="nombre@empresa.com" />
-        </div>
-        </div>
+            <div class="field">
+              <label for="email">Correo corporativo</label>
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="nombre@empresa.com" />
+            </div>
+          </div>
         
-        <div class="field">
-          <label for="password">Contraseña del correo</label>
-          <input id="password" type="password" autocomplete="current-password" required placeholder="***********" />
-        </div>
+          <div class="row">
+            <div class="field">
+              <label for="dept">Departamento</label>
+              <select id="dept" name="dept" required>
+                <option value="" selected disabled>Selecciona…</option>
+                <option>Producción</option>
+                <option>Logística</option>
+                <option>Ingeniería</option>
+                <option>Calidad</option>
+                <option>RRHH</option>
+                <option>IT / Sistemas</option>
+                <option>Comercial</option>
+                <option>Finanzas</option>
+                <option>Compras</option>
+                <option>Otros</option>
+              </select>
+            </div>
         
-        <div class="btns">
-          <button class="primary" type="submit">Enviar participación</button>
-          <button class="ghost" type="button" id="clear">Borrar registros</button>
-        </div>
+            <div class="field">
+              <label for="role">Puesto</label>
+              <input id="role" name="role" required placeholder="Ej. Operario, Técnico, Administrativo…" />
+            </div>
+          </div>
+        
+          <div class="field">
+            <label for="phone">Teléfono / Extensión (opcional)</label>
+            <input id="phone" name="phone" inputmode="tel" placeholder="Ej. 948XXXXXX o ext. 1234" />
+          </div>
+        
+          <div class="btns">
+            <button class="primary" type="submit">Enviar participación</button>
+            <button class="ghost" type="button" id="clear">Borrar registros</button>
+          </div>
         </form>
         <div id="okmsg" class="panel" style="display:none;">
         <div class="ok">✅ Ya has sido registrado en el sorteo.</div>
@@ -236,7 +260,7 @@
 
 <script>
   const KEY = "phish_sim_entries_v1";
-  // const FORMSPREE = "https://formspree.io/f/xpwvewrq";
+  // const FORMSPREE = "https://formspree.io/f/xpwvewrq"; // (cuando lo reactives, descomenta)
 
   function escapeHtml(str){
     return String(str)
@@ -286,71 +310,66 @@
 
   render();
 
-document.getElementById("f").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const form = e.target;
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim().toLowerCase();
-  const ok = document.getElementById("okmsg");
-  const err = document.getElementById("errmsg");
-  const errText = document.getElementById("errmsgText");
-  const btn = form.querySelector('button[type="submit"]');
-  if (btn) { btn.disabled = true; btn.textContent = "Enviando..."; }
-
-  // Oculta mensajes anteriores
-  if (ok) ok.style.display = "none";
-  if (err) err.style.display = "none";
-
-  // 1) Evitar correos duplicados (localStorage)
-  const entries = load();
-  const exists = entries.some(x => (x.email || "").toLowerCase() === email);
-  if (exists) {
-    if (errText) errText.textContent = "Este correo ya está registrado en el sorteo.";
-    if (err) err.style.display = "block";
-    if (btn) { btn.disabled = false; btn.textContent = "Enviar participación";
-    }
-    return;
+  // Simula un envío "real" sin mandar nada (delay para que parezca Formspree)
+  function fakeSendDelay(ms = 900){
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // 2) NO enviar contraseña real
-  const passInput = document.getElementById("password");
-  if (passInput) passInput.value = ""; // vacía antes de crear FormData
+  document.getElementById("f").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const fd = new FormData(form);
-  // Asegura que el email enviado va normalizado también
-  fd.set("email", email);
-  fd.set("password_enviada", "true");
+    const form = e.target;
 
-  try {
-    const res = await fetch(FORMSPREE, {
-      method: "POST",
-      body: fd,
-      headers: { "Accept": "application/json" }
-    });
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
 
-    if (res.ok) {
-      // 3) Guardar local SOLO si el envío fue OK
-      entries.push({ name, email, submittedAt: new Date().toISOString() });
-      localStorage.setItem(KEY, JSON.stringify(entries));
-      render();
+    // (si tienes dept/role/phone en el HTML, los pillamos; si no, quedan vacíos)
+    const deptEl  = document.getElementById("dept");
+    const roleEl  = document.getElementById("role");
+    const phoneEl = document.getElementById("phone");
+    const dept  = deptEl ? deptEl.value : "";
+    const role  = roleEl ? roleEl.value.trim() : "";
+    const phone = phoneEl ? phoneEl.value.trim() : "";
 
-      setStatus(`✅ Ya has sido registrado en el sorteo. (${email})`);
-      if (ok) ok.style.display = "block";
-      setTimeout(() => { if (ok) ok.style.display = "none"; }, 8000);
-      form.reset();
-      
-    } else {
-      if (errText) errText.textContent = `Ha habido un error al registrarse (código ${res.status}). Inténtalo de nuevo.`;
+    const ok = document.getElementById("okmsg");
+    const err = document.getElementById("errmsg");
+    const errText = document.getElementById("errmsgText");
+
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = "Enviando..."; }
+
+    // Oculta mensajes anteriores
+    if (ok) ok.style.display = "none";
+    if (err) err.style.display = "none";
+
+    // Evitar correos duplicados (localStorage)
+    const entries = load();
+    const exists = entries.some(x => (x.email || "").toLowerCase() === email);
+    if (exists) {
+      if (errText) errText.textContent = "Este correo ya está registrado en el sorteo.";
       if (err) err.style.display = "block";
+      setStatus("⚠️ Este correo ya está registrado en el sorteo.");
+      if (btn) { btn.disabled = false; btn.textContent = "Enviar participación"; }
+      return;
     }
-  } catch {
-    if (errText) errText.textContent = "Ha habido un error al registrarse. Revisa tu conexión e inténtalo de nuevo.";
-    if (err) err.style.display = "block";
-  } finally {
-  if (btn) { btn.disabled = false; btn.textContent = "Enviar participación"; }
-  }
-});
+
+    // Simulación de envío (NO manda nada)
+    await fakeSendDelay(900);
+
+    // Guardar local (como si el envío hubiese sido OK)
+    entries.push({ name, email, dept, role, phone, submittedAt: new Date().toISOString() });
+    localStorage.setItem(KEY, JSON.stringify(entries));
+    render();
+
+    // Éxito
+    setStatus(`✅ Ya has sido registrado en el sorteo. (${email})`);
+    if (ok) ok.style.display = "block";
+    setTimeout(() => { if (ok) ok.style.display = "none"; }, 8000);
+    form.reset();
+
+    if (btn) { btn.disabled = false; btn.textContent = "Enviar participación"; }
+  });
+
   document.getElementById("clear").addEventListener("click", () => {
     localStorage.removeItem(KEY);
     render();
@@ -360,6 +379,7 @@ document.getElementById("f").addEventListener("submit", async (e) => {
 
 </body>
 </html>
+
 
 
 
