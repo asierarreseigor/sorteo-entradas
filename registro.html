@@ -184,12 +184,12 @@
           <div class="row">
             <div class="field">
               <label for="name">Nombre y apellidos</label>
-              <input id="name" name="name" autocomplete="name" required placeholder="Ej. Nombre Apellidos" />
+              <input id="name" name="name" autocomplete="name" required placeholder="Nombre Apellidos" />
             </div>
         
             <div class="field">
               <label for="email">Correo corporativo</label>
-              <input id="email" name="email" type="email" autocomplete="email" required placeholder="nombre@empresa.com" />
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="nombre.apellido@empresa.com" />
             </div>
           </div>
         
@@ -203,7 +203,7 @@
                 <option>Ingeniería</option>
                 <option>Calidad</option>
                 <option>RRHH</option>
-                <option>IT / Sistemas</option>
+                <option>IT / Seguridad</option>
                 <option>Comercial</option>
                 <option>Finanzas</option>
                 <option>Compras</option>
@@ -219,12 +219,11 @@
         
           <div class="field">
             <label for="phone">Teléfono / Extensión (opcional)</label>
-            <input id="phone" name="phone" inputmode="tel" placeholder="Ej. 948XXXXXX o ext. 1234" />
+            <input id="phone" name="phone" inputmode="tel" placeholder="XXXXXXXXX" />
           </div>
         
           <div class="btns">
             <button class="primary" type="submit">Enviar participación</button>
-            <button class="ghost" type="button" id="clear">Borrar registros</button>
           </div>
         </form>
         <div id="okmsg" class="panel" style="display:none;">
@@ -369,16 +368,11 @@
 
     if (btn) { btn.disabled = false; btn.textContent = "Enviar participación"; }
   });
-
-  document.getElementById("clear").addEventListener("click", () => {
-    localStorage.removeItem(KEY);
-    render();
-    setStatus("Registros borrados.");
-  });
 </script>
 
 </body>
 </html>
+
 
 
 
