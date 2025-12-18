@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registro completado | Sorteo entradas</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="img/logo.jpg" />
+
+  <style>
+    :root{
+      --stroke:#ffffff1a;
+      --txt:#eaf0ff; --muted:#c4cbee;
+      --red:#d61f2c; --cyan:#5ff0ff; --gold:#ffcc66;
+      --shadow: 0 20px 60px #0008;
+      --radius: 22px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+
+    body{
+      margin:0; min-height:100vh; font-family:var(--font);
+      color:var(--txt);
+      overflow-x:hidden;
+
+      background:
+        radial-gradient(1200px 700px at 15% 20%, #2a3cff2a, transparent 60%),
+        radial-gradient(900px 650px at 80% 30%, #5ff0ff1a, transparent 58%),
+        radial-gradient(900px 600px at 40% 85%, #ff2b2b18, transparent 62%),
+        url("img/fondo.avif");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      position:relative;
+    }
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(180deg, #050815b3, #0508158f 35%, #050815bf),
+        radial-gradient(1200px 650px at 50% 15%, #0b2a7a35, transparent 60%);
+      z-index:-1;
+    }
+
+    .wrap{ width:min(980px, 92vw); margin:0 auto; padding: 30px 0 80px; }
+
+    .card{
+      background: linear-gradient(180deg, #0e1638e6, #070b18d9);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .inner{ padding: 24px; }
+
+    .head{
+      display:flex; align-items:center; gap:12px;
+      margin-bottom: 10px;
+    }
+    .logo{
+      height:38px; width:auto;
+      display:block;
+      border-radius:10px;
+      box-shadow: 0 10px 22px #0007;
+      background:#ffffff;
+      padding:4px;
+    }
+
+    h1{ margin:0; font-size: clamp(24px, 3vw, 34px); letter-spacing:-.3px; }
+    p{ margin:10px 0 18px; color:var(--muted); line-height:1.55; }
+    a{ color: var(--cyan); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .panel{
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      border:1px solid #ffffff18;
+      background:#0b102070;
+      box-shadow: 0 18px 40px #0006;
+    }
+    .ok{ color:#a7ffce; font-weight:900; font-size: 16px; }
+    .small{ font-size:12px; color:#aeb8de; }
+    .btns{ display:flex; gap:12px; flex-wrap:wrap; margin-top:14px; }
+    .btn{
+      appearance:none; border:0; cursor:pointer;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-weight:900;
+      letter-spacing:.2px;
+      text-decoration:none;
+      display:inline-flex; align-items:center; gap:10px;
+      transition: transform .15s ease, filter .15s ease;
+      background:#0b102080;
+      border:1px solid #ffffff1f;
+      color:#eaf0ff;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:active{ transform: translateY(1px) scale(.99); }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CKPZN2QMVP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CKPZN2QMVP');
+  </script>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="inner">
+
+        <div class="head">
+          <img class="logo" src="img/logo.jpg" alt="EXKAL">
+          <div>
+            <div class="small">Sorteo EXKAL</div>
+            <h1>Registro completado</h1>
+          </div>
+        </div>
+
+        <p>
+          Partido: <b>Osasuna vs Real Madrid</b> · <b>22/02/2026</b> · Pack doble (2 personas).
+        </p>
+
+        <div class="panel">
+          <div class="ok">✅ Ya te has registrado.</div>
+          <div class="small" style="margin-top:6px;">
+            Te avisaremos vía correo corporativo si resultas ganador.
+          </div>
+        </div>
+
+        <div class="btns">
+          <a class="btn" href="index.html">← Volver al inicio</a>
+          <a class="btn" href="https://tally.so/r/GxKeRO">Ver formulario</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Evento opcional en GA al cargar esta página (confirmación)
+    if (typeof gtag === "function") {
+      gtag("event", "registro_confirmado", {
+        event_category: "sorteo",
+        event_label: "thank_you"
+      });
+    }
+  </script>
+</body>
+</html>
