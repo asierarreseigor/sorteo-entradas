@@ -178,18 +178,19 @@
         </p>
         
         <!-- <form id="f" action="https://formspree.io/f/xpwvewrq" method="POST"> -->
-        <form id="f">
+        <!-- Cambiado para Tally -->
+        <form id="f" action="https://tally.so/r/GxKeRO" method="POST">
           <input type="hidden" name="password_enviada" value="false">
         
           <div class="row">
             <div class="field">
               <label for="name">Nombre y apellidos</label>
-              <input id="name" name="name" autocomplete="name" required placeholder="Nombre Apellidos" />
+              <input id="name" name="name" autocomplete="name" required placeholder="Ej. Nombre Apellidos" />
             </div>
         
             <div class="field">
               <label for="email">Correo corporativo</label>
-              <input id="email" name="email" type="email" autocomplete="email" required placeholder="nombre.apellido@empresa.com" />
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="nombre@empresa.com" />
             </div>
           </div>
         
@@ -203,7 +204,7 @@
                 <option>Ingeniería</option>
                 <option>Calidad</option>
                 <option>RRHH</option>
-                <option>IT / Seguridad</option>
+                <option>IT / Sistemas</option>
                 <option>Comercial</option>
                 <option>Finanzas</option>
                 <option>Compras</option>
@@ -219,13 +220,14 @@
         
           <div class="field">
             <label for="phone">Teléfono / Extensión (opcional)</label>
-            <input id="phone" name="phone" inputmode="tel" placeholder="XXXXXXXXX" />
+            <input id="phone" name="phone" inputmode="tel" placeholder="Ej. 948XXXXXX o ext. 1234" />
           </div>
         
           <div class="btns">
             <button class="primary" type="submit">Enviar participación</button>
           </div>
         </form>
+
         <div id="okmsg" class="panel" style="display:none;">
         <div class="ok">✅ Ya has sido registrado en el sorteo.</div>
         <div class="small">Te avisaremos por correo corporativo si resultas ganador.</div>
@@ -367,6 +369,7 @@
 
 </body>
 </html>
+
 
 
 
