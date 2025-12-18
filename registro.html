@@ -178,8 +178,7 @@
         </p>
         
         <!-- <form id="f" action="https://formspree.io/f/xpwvewrq" method="POST"> -->
-        <!-- Cambiado para Tally -->
-        <form id="f" action="https://tally.so/r/GxKeRO" method="POST">
+        <form id="f" action="https://tally.so/r/GxKeRO" method="POST" target="tally_iframe">
           <input type="hidden" name="password_enviada" value="false">
         
           <div class="row">
@@ -227,7 +226,7 @@
             <button class="primary" type="submit">Enviar participación</button>
           </div>
         </form>
-
+        <iframe name="tally_iframe" style="display:none;"></iframe>
         <div id="okmsg" class="panel" style="display:none;">
         <div class="ok">✅ Ya has sido registrado en el sorteo.</div>
         <div class="small">Te avisaremos por correo corporativo si resultas ganador.</div>
@@ -325,6 +324,7 @@
   const btn = form.querySelector('button[type="submit"]');
   if (btn) { btn.disabled = true; btn.textContent = "Enviando..."; }
 
+  // Oculta mensajes anteriores
   if (ok) ok.style.display = "none";
   if (err) err.style.display = "none";
 
@@ -341,12 +341,14 @@
     return;
   }
 
-  // No duplicado -> guardo local + GA y DEJO que el form se envíe a Tally
+  // No duplicado -> guardo local + GA y dejo que el navegador envíe a Tally (NO preventDefault)
   entries.push({ name, email, dept, role, phone, submittedAt: new Date().toISOString() });
   localStorage.setItem(KEY, JSON.stringify(entries));
   render();
 
-  setStatus("⏳ Enviando participación…");
+  // UI de éxito (tu página, sin redirección si usas iframe target)
+  setStatus(`✅ Ya has sido registrado en el sorteo. (${email})`);
+  if (ok) ok.style.display = "block";
 
   if (typeof gtag === "function") {
     gtag("event", "registro_sorteo", {
@@ -355,12 +357,22 @@
       value: 1
     });
   }
+
+  // Importante: reset un pelín después para no interferir con el POST a Tally
+  setTimeout(() => {
+    form.reset();
+    if (btn) { btn.disabled = false; btn.textContent = "Enviar participación"; }
+  }, 300);
+
+  // opcional: ocultar el OK tras unos segundos
+  setTimeout(() => { if (ok) ok.style.display = "none"; }, 8000);
 });
 
 </script>
 
 </body>
 </html>
+
 
 
 
