@@ -289,7 +289,14 @@
         </div>
 
         <div class="ctaRow">
-          <a href="https://tally.so/r/GxKeRO" class="btn btnPrimary">Continuar al registro →</a>
+          <a href="https://tally.so/r/GxKeRO" class="btn btnPrimary" onclick="if(typeof gtag==='function'){
+           gtag('event','click_registro',{
+             event_category:'sorteo',
+             event_label:'continuar_registro',
+             event_callback:function(){ window.location.href='https://tally.so/r/GxKeRO'; }
+           });
+           return false;
+         }">Continuar al registro →</a>
         </div>
       </div>
     </section>
@@ -323,6 +330,7 @@
 </main>
 </body>
 </html>
+
 
 
 
